@@ -13,6 +13,11 @@ positions (the *disparity*), and similar triangles give
 depth_mm = focal_length_px × baseline_mm / disparity_px
 ```
 
+<p align="center">
+  <img src="images/depth-live.gif" width="860" alt="Live view: dense disparity heat map (left, warm = near) beside the camera feed with crosshair and metric distance readout">
+</p>
+<p align="center"><i>Live from <code>examples/depth_web.py</code>: dense disparity heat map on the left (warm = near), camera view with click-to-measure crosshair and metric readout on the right.</i></p>
+
 ## Bill of materials
 
 | Item | Qty | ~Price | Notes |
