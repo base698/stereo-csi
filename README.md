@@ -190,7 +190,16 @@ hardware/          stereo-mount.stl (print this first)
 ## Results from a real calibration run
 
 Numbers from the capture session pictured above (laptop-screen checkerboard,
-one afternoon, tools exactly as in this repo):
+one afternoon, tools exactly as in this repo). The exact solve command:
+
+```bash
+python3 calibration/calibrate_camera.py \
+  --stereo \
+  --left  "calibration/images/left/*.jpg" \
+  --right "calibration/images/right/*.jpg" \
+  --pattern 6x4 --square-size 37 \
+  --output calibration/output
+```
 
 ```text
 Images per camera:        180 (all sessions of the day pooled)
