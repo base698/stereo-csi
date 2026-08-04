@@ -76,7 +76,12 @@ The IMX219 is captured at 1640×1232 (full field of view) and scaled to
 You need a checkerboard of precisely known square size. You don't need to
 print one: **open `calibration/checkerboard_6x4_screen.html` full-screen on a
 laptop** (F11 / ⌃⌘F). A flat, backlit LCD is actually a *better* calibration
-target than most printouts — paper curls, screens don't.
+target than most printouts — paper curls, screens don't. (This is a studied
+technique: display-based targets calibrate more precisely than printed
+checkerboards thanks to planarity and exact pixel geometry. Known screen
+caveats — glass refraction, moiré with some sensor/distance combos, PWM
+flicker on rolling-shutter sensors — are second-order at this accuracy level;
+avoid steep viewing angles and max screen brightness if you see banding.)
 
 One catch: the on-screen square size depends on your screen, so **measure one
 square with a ruler or calipers** (edge to edge, in mm). Measure across
