@@ -19,12 +19,12 @@ depth_mm = focal_length_px × baseline_mm / disparity_px
 |---|---|---|---|
 | Raspberry Pi Camera Module V2 (IMX219, 8MP) | 2 | $25 ea | Identical modules matter — same sensor, same lens |
 | [Arducam Pi Zero camera cable set (22-pin to 15-pin)](https://www.amazon.com/dp/B085RW9K13) | 1 set (3 lengths) | $9 | **Required:** the Jetson Orin Nano CAM ports are 22-pin 0.5 mm pitch, but Pi Camera V2 modules are 15-pin 1 mm — these Pi Zero-style flex cables adapt between them. The 150 mm length reaches the mount |
-| NVIDIA Jetson Orin Nano dev kit | 1 | $250 | Any board with **two** CSI ports works (Orin Nano/NX carriers) |
+| NVIDIA Jetson Orin Nano dev kit | 1 | $384 | Any board with **two** CSI ports works (Orin Nano/NX carriers). Street price mid-2026; it launched at $249 — tariffs happened |
 | 3D-printed stereo mount | 1 | ~$1 of PLA | `hardware/stereo-mount.stl` — holds both modules rigidly at a fixed baseline |
 | M2 screws + heat-set inserts | 8 | $5/kit | Camera PCB mounting holes are M2 |
 | A rigid ruler or calipers | 1 | — | You must measure two things: the checkerboard square and the lens spacing |
 
-Total: **~$315**, most of it the Jetson you probably already have.
+Total: **~$450**, most of it the Jetson you probably already have.
 
 **The mount is the actual product.** Stereo calibration assumes the cameras
 never move relative to each other — a rigid, printed mount with both PCBs
