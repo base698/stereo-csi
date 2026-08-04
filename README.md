@@ -186,3 +186,38 @@ calibration/       checkerboard page, web capture helper, stereo solver
 examples/          depth_preview.py + example calibration file
 hardware/          stereo-mount.stl (print this first)
 ```
+
+## Results from a real calibration run
+
+Numbers from the capture session pictured above (laptop-screen checkerboard,
+one afternoon, tools exactly as in this repo):
+
+```text
+Images per camera:        180 (all sessions of the day pooled)
+Corners found:            180/180 left, 180/180 right
+Individual RMS:           0.039 px (left), 0.042 px (right)
+Stereo RMS:               0.771 px          <- under the 1 px quality bar
+Solved baseline:          35.36 mm          <- physically 52.5 mm!
+```
+
+Cross-checked by measuring a saved checkerboard pair with the fresh
+calibration (physical baseline override applied): valid depth at 0.9-1.0
+confidence across the board.
+
+Three honest lessons in those numbers:
+
+1. **A backlit screen target detects spectacularly.** 360/360 corner
+   detections and per-camera RMS under 0.05 px - print targets rarely get
+   close.
+2. **Screen calibration is weak on absolute scale.** The solved baseline
+   came out 35 mm on a physically 52.5 mm mount (a different session solved
+   41 mm). This is *why* the workflow insists on the caliper-measured
+   `baseline_override` - the distortion model is excellent, the scale is not.
+3. **Pose variety matters more than pair count.** All 180 pairs were shot
+   from standing height, and the solved rectification shows a ~110 px
+   vertical shift as a result. More low/high/tilted poses would pin that
+   down. RMS alone doesn't tell you this - check the rectification shift the
+   loader prints.
+
+(The captured images and solved `.npz` stay out of git - `calibration/images/`
+and `calibration/output/` are gitignored; rerun the workflow to reproduce.)
