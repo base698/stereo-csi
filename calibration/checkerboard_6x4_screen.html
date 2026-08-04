@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>6x4 Calibration Checkerboard - 21mm</title>
+  <style>
+    :root {
+      --square-size: min(13.5vw, 19vh);
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: #777;
+      color: #f5f5f5;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .stage {
+      min-height: 100vh;
+      width: 100vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #777;
+    }
+
+    .board-wrap {
+      padding: min(2vw, 2vh);
+      background: #fff;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(7, var(--square-size));
+      grid-template-rows: repeat(5, var(--square-size));
+      border: 1px solid #000;
+    }
+
+    .square {
+      width: var(--square-size);
+      height: var(--square-size);
+    }
+
+    .black {
+      background: #000;
+    }
+
+    .white {
+      background: #fff;
+    }
+
+    @media print {
+      body,
+      .stage {
+        background: #fff;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <div class="board-wrap" aria-label="6 by 4 internal corner checkerboard with 21 millimeter squares">
+      <div class="board">
+        <div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div>
+        <div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div>
+        <div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div>
+        <div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div>
+        <div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
