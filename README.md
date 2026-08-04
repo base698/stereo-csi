@@ -135,7 +135,12 @@ python3 examples/depth_web.py \
 
 then open `http://<jetson>:8011` — live camera view with a crosshair and the
 distance to whatever is under it (click to move the measurement point). No
-model, no inference loop; this is the depth stack by itself. `StereoDepthService` handles
+model, no inference loop; this is the depth stack by itself.
+
+<p align="center">
+  <img src="images/depth-ui.jpg" width="760" alt="Depth web UI measuring a sandwich bag at 0.99 m">
+</p>
+<p align="center"><i>A sandwich bag at arm's length, scientifically calibrated to exactly 0.99&nbsp;m — where "scientifically" means a tape measure, held approximately level, read to whatever precision an outstretched arm allows. The stereo rig agreed anyway (disparity 40.3&nbsp;px, confidence 0.99).</i></p> `StereoDepthService` handles
 rectification, block matching, and turns any pixel coordinate into a
 millimeter measurement with a confidence score:
 
