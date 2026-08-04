@@ -34,6 +34,10 @@ drifts every time a ribbon cable is bumped. Print `hardware/stereo-mount.stl`
 calibrating. As printed, the lens centers sit ~52.5 mm apart — **measure yours
 with calipers**; you'll need the number later.
 
+<p align="center">
+  <img src="images/stereo-mount.jpg" width="440" alt="Both Pi Camera V2 modules screwed to the printed stereo mount, laser below, ribbon cables routed behind">
+</p>
+
 ## 1. Wire and verify capture
 
 Plug the cameras into the two CSI ports using the 22-pin-to-15-pin flex
