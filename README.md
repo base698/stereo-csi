@@ -36,8 +36,16 @@ with calipers**; you'll need the number later.
 
 ## 1. Wire and verify capture
 
-Plug the cameras into the two CSI ports (they enumerate as `sensor-id=0` and
-`1`). Capture is done with a GStreamer `nvarguscamerasrc` pipeline wrapped in
+Plug the cameras into the two CSI ports. **Port mapping on the Jetson:** the
+physical connectors (CAM0/CAM1 on Orin Nano dev kits) enumerate as
+`nvarguscamerasrc sensor-id=0` and `sensor-id=1`; this library's `camera_id`
+is that sensor id — in stereo mode `camera_id` is the **left** camera and
+`camera_id + 1` the right (see `stereo_csi/camera_source.py`). If your left
+image comes from the physically-right camera, either swap the ribbon
+connectors or swap which module sits in which side of the mount — left/right
+must match or all disparities come out negative. Verify what the OS sees with
+`v4l2-ctl --list-devices` (needs `v4l-utils`), and note that some carrier
+boards require enabling the CSI lanes once via `sudo /opt/nvidia/jetson-io/jetson-io.py`. Capture is done with a GStreamer `nvarguscamerasrc` pipeline wrapped in
 `stereo_csi/csi_camera.py`; `stereo_csi/camera_source.py` pairs the two into
 synchronized-enough left/right frame reads:
 
@@ -113,7 +121,17 @@ python3 examples/depth_preview.py \
   --baseline-override 52.5
 ```
 
-Prints the depth at frame center once per second. `StereoDepthService` handles
+Prints the depth at frame center once per second. For a browser version:
+
+```bash
+python3 examples/depth_web.py \
+  --calibration calibration/output/stereo_calibration.npz \
+  --baseline-override 52.5
+```
+
+then open `http://<jetson>:8011` — live camera view with a crosshair and the
+distance to whatever is under it (click to move the measurement point). No
+model, no inference loop; this is the depth stack by itself. `StereoDepthService` handles
 rectification, block matching, and turns any pixel coordinate into a
 millimeter measurement with a confidence score:
 
