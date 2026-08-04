@@ -95,7 +95,12 @@ python3 calibration/capture_calibration.py \
 ```
 
 Open `http://<jetson>:8010`, hold the laptop screen in front of the rig, and
-capture **40–60 pairs**: near and far, all four corners of the frame, and
+capture **40–60 pairs**:
+
+<p align="center">
+  <img src="images/calibration-ui.jpg" width="820" alt="Calibration capture UI: both cameras showing PATTERN DETECTED with corner grids drawn on the laptop-screen checkerboard">
+</p>
+ near and far, all four corners of the frame, and
 tilted at varying angles (the tilts are what pin down the lens distortion).
 Keep the screen still for each shot — motion blur ruins corners.
 
