@@ -24,40 +24,7 @@ import cv2
 import numpy as np
 
 from stereo_csi import StereoDepthService
-
-
-def dense_disparity(depth, left, right):
-    """Rectify a pair and run SGBM over the full frame."""
-    rect_left, rect_right = depth.rectify_stereo_frames(left, right)
-    gray_l = cv2.cvtColor(rect_left, cv2.COLOR_BGR2GRAY)
-    gray_r = cv2.cvtColor(rect_right, cv2.COLOR_BGR2GRAY)
-
-    matcher = cv2.StereoSGBM_create(
-        minDisparity=-192,
-        numDisparities=256,
-        blockSize=5,
-        P1=8 * 3 * 5 ** 2,
-        P2=32 * 3 * 5 ** 2,
-        uniquenessRatio=10,
-        speckleWindowSize=100,
-        speckleRange=2,
-        disp12MaxDiff=1,
-    )
-    disp = matcher.compute(gray_l, gray_r).astype(np.float32) / 16.0
-    return rect_left, disp
-
-
-def colorize(disp):
-    """Normalize valid disparities and apply a heat colormap."""
-    valid = disp > disp.min() + 1
-    vis = np.zeros_like(disp)
-    if valid.any():
-        lo, hi = np.percentile(disp[valid], [5, 95])
-        vis = np.clip((np.abs(disp) - abs(lo)) / max(1e-6, abs(hi) - abs(lo)), 0, 1)
-    vis8 = (vis * 255).astype(np.uint8)
-    heat = cv2.applyColorMap(vis8, cv2.COLORMAP_TURBO)
-    heat[~valid] = (30, 30, 30)  # matcher found nothing: dark gray, not a lie
-    return heat
+from stereo_csi.dense import colorize_disparity, compute_dense_disparity
 
 
 def main():
@@ -95,8 +62,8 @@ def main():
                                image_size=(left.shape[1], left.shape[0]))
     depth.load_calibration()
 
-    rect_left, disp = dense_disparity(depth, left, right)
-    heat = colorize(disp)
+    rect_left, disp = compute_dense_disparity(depth, left, right)
+    heat = colorize_disparity(disp)
     side = np.hstack([rect_left, heat])
     cv2.imwrite(args.out, side)
     print(f"wrote {args.out}  ({side.shape[1]}x{side.shape[0]})")

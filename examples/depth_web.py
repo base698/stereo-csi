@@ -26,12 +26,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import cv2  # noqa: E402
 
 from stereo_csi import CameraSource, CSICameraCapture, StereoDepthService  # noqa: E402
+from stereo_csi.dense import colorize_disparity, compute_dense_disparity  # noqa: E402
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><title>stereo depth</title>
 <style>
  body{background:#111;color:#eee;font-family:monospace;text-align:center;margin:0;padding:14px}
+ #row{display:flex;gap:10px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
  #wrap{position:relative;display:inline-block;cursor:crosshair}
- img{max-width:96vw;max-height:78vh;display:block}
+ img{max-width:47vw;max-height:70vh;display:block}
  #cross{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;pointer-events:none}
  #cross:before,#cross:after{content:"";position:absolute;background:#22FF88}
  #cross:before{left:16px;top:0;width:2px;height:34px}
@@ -39,7 +41,10 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8"><title>stereo depth</
  #depth{font-size:34px;margin:12px;color:#22FF88}
  #detail{color:#888;font-size:15px}
 </style></head><body>
-<div id=wrap><img id=view src=/frame><div id=cross></div></div>
+<div id=row>
+ <img id=heat src=/disparity title="dense disparity (near=warm)">
+ <div id=wrap><img id=view src=/frame><div id=cross></div></div>
+</div>
 <div id=depth>--</div>
 <div id=detail></div>
 <script>
@@ -53,6 +58,8 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8"><title>stereo depth</
    px=(e.clientX-r.left)/r.width; py=(e.clientY-r.top)/r.height; placeCross();
  };
  setInterval(()=>{v.src="/frame?t="+Date.now();},350);
+ const h=document.getElementById("heat");
+ setInterval(()=>{h.src="/disparity?t="+Date.now();},900);
  setInterval(async()=>{
    const r=await fetch(`/depth?x=${px.toFixed(4)}&y=${py.toFixed(4)}`);
    const m=await r.json();
@@ -69,6 +76,7 @@ class State:
         self.left = None
         self.right = None
         self.jpeg = b""
+        self.heat_jpeg = b""
 
 
 def capture_loop(camera, state):
@@ -83,6 +91,25 @@ def capture_loop(camera, state):
             state.right = right
             if ok:
                 state.jpeg = buf.tobytes()
+
+
+def disparity_loop(depth, state, downscale=2):
+    while True:
+        with state.lock:
+            left, right = state.left, state.right
+        if left is None or right is None:
+            time.sleep(0.2)
+            continue
+        try:
+            _, disp = compute_dense_disparity(depth, left, right, downscale=downscale)
+            heat = colorize_disparity(disp)
+            ok, buf = cv2.imencode(".jpg", heat, [cv2.IMWRITE_JPEG_QUALITY, 85])
+            if ok:
+                with state.lock:
+                    state.heat_jpeg = buf.tobytes()
+        except Exception as exc:
+            print(f"disparity error: {exc}")
+            time.sleep(1)
 
 
 def main():
@@ -112,6 +139,7 @@ def main():
 
     state = State()
     threading.Thread(target=capture_loop, args=(camera, state), daemon=True).start()
+    threading.Thread(target=disparity_loop, args=(depth, state), daemon=True).start()
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *a):
@@ -129,6 +157,10 @@ def main():
                 with state.lock:
                     jpeg = state.jpeg
                 self._send(200 if jpeg else 503, jpeg or "no frame yet", "image/jpeg")
+            elif url.path == "/disparity":
+                with state.lock:
+                    jpeg = state.heat_jpeg
+                self._send(200 if jpeg else 503, jpeg or "no disparity yet", "image/jpeg")
             elif url.path == "/depth":
                 q = parse_qs(url.query)
                 fx = float(q.get("x", [0.5])[0])
